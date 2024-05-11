@@ -1,5 +1,4 @@
-const { createServer } = require("node:http");
-const { stringify } = require("node:querystring");
+const { http } = require("node:http");
 
 const os = require("os");
 
@@ -29,6 +28,6 @@ http.createServer((req, res) => {
         });
         res.end("Not Found");
     }
-   }).listen(3000, () => {
-      console.log("Server listening on port 3000");
+ });server.listen(3000, "127.0.0.1", () => {
+      console.log("Server listening");
    });
