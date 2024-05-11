@@ -1,33 +1,38 @@
-const { http } = require("node:http");
+const http = require('node:http');
+const os = require('os');
 
-const os = require("os");
+const hostname = 'localhost';
+const port = 3000;
 
-const cpuinfo = {
-    platform: os.platform(),
-    arch: os.arch(),
-    cores: os.cpus().length,
-};
+const server = http.createServer((req, res) => {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-http.createServer((req, res) => {
-   if (req.url === "/cpuinfo" && req.method === 'GET') {
-       
+  if (req.method === 'GET' && req.url === '/') {
+    // Simulate asynchronous operation with random delay
+    const delay = Math.random() * 1000; // Delay between 0-1 seconds
     setTimeout(() => {
-      res.writeHead(200, {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET",
-      });
+      const cpuInfo = {
+        cores: os.cpus().length,
+        model: os.cpus()[0].model,
+      };
+      const osInfo = {
+        platform: os.platform(),
+        release: os.release(),
+      };
 
-      res.end(JSON,stringify(cpuinfo));
-    }, math.floor(Math.random()*2000));
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify({ cpu: cpuInfo, os: osInfo }));
+    }, delay);
+  } else {
+    res.statusCode = 404;
+    res.end('Not Found');
+  }
+});
 
-    } else {
-        res.writeHead(404, {
-            "Content-Type": "text/plain",
-            "Access-Control-Allow-Origin": "*",
-        });
-        res.end("Not Found");
-    }
- });server.listen(3000, "127.0.0.1", () => {
-      console.log("Server listening");
-   });
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
